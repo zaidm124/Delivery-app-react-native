@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, TextInput, ScrollView } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 import {
@@ -10,15 +10,37 @@ import {
 } from "react-native-heroicons/outline";
 import Categories from "../components/categories";
 import FeaturedRow from "../components/FeaturedRow";
-
+import { client } from "../sanity";
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [featureCategories, setFeaturedCategories] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, []);
+
+  useEffect(() => {
+    client
+      .fetch(
+        `
+    *[_type=="featured"]{
+      ...,
+      restaurants[]->{
+        ...,
+        dishes[]->,
+          category->,
+      },
+    }
+    `
+      )
+      .then((data) => {
+        setFeaturedCategories(data);
+      });
+  }, []);
+
+  console.log(featureCategories);
 
   return (
     <SafeAreaView className="bg-white pt-5">
@@ -61,28 +83,17 @@ const HomeScreen = () => {
 
         {/* Features */}
 
-        {/* Featured */}
-        <FeaturedRow
-          id={1}
-          title={"featured"}
-          description={"Paid Placements from our partners"}
-          featureCategory={"featured"}
-        />
-        {/* Tasty Discounts */}
-        <FeaturedRow
-          id={2}
-          title={"Tasty Discounts"}
-          description={"Paid Placements from our partners"}
-          featureCategory={"featured"}
-        />
-
-        {/* Offers near you */}
-        <FeaturedRow
-          id={3}
-          title={"Offers Near You"}
-          description={"Paid Placements from our partners"}
-          featureCategory={"featured"}
-        />
+        {featureCategories?.map((category) => {
+          return (
+            <FeaturedRow
+              key={category._id}
+              id={category._id}
+              restaurants={category.restaurants}
+              title={category.name}
+              description={category.short_description}
+            />
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );

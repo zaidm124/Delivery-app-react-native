@@ -3,7 +3,7 @@ import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import RestaurantCard from "./RestaurantCard";
 
-const FeaturedRow = ({ id, title, description, featureCategory }) => {
+const FeaturedRow = ({ restaurants, title, description }) => {
   return (
     <View>
       <View className="flex-row mt-4 justify-between items-center px-4">
@@ -17,34 +17,19 @@ const FeaturedRow = ({ id, title, description, featureCategory }) => {
         contentContainerStyle={{ paddingHorizontal: 15, paddingTop: 10 }}
         showsHorizontalScrollIndicator={false}
       >
-        <RestaurantCard
-          title={"Nando's"}
-          rating={4.5}
-          address={"123 Main St"}
-          genre={"Others"}
-          imgUrl="https://assets.bonappetit.com/photos/5b919cb83d923e31d08fed17/1:1/w_2560%2Cc_limit/basically-burger-1.jpg"
-        />
-        <RestaurantCard
-          title={"Nando's"}
-          rating={4.5}
-          address={"123 Main St"}
-          genre={"Others"}
-          imgUrl="https://assets.bonappetit.com/photos/5b919cb83d923e31d08fed17/1:1/w_2560%2Cc_limit/basically-burger-1.jpg"
-        />
-        <RestaurantCard
-          title={"Nando's"}
-          rating={4.5}
-          address={"123 Main St"}
-          genre={"Others"}
-          imgUrl="https://assets.bonappetit.com/photos/5b919cb83d923e31d08fed17/1:1/w_2560%2Cc_limit/basically-burger-1.jpg"
-        />
-        <RestaurantCard
-          title={"Nando's"}
-          rating={4.5}
-          address={"123 Main St"}
-          genre={"Others"}
-          imgUrl="https://assets.bonappetit.com/photos/5b919cb83d923e31d08fed17/1:1/w_2560%2Cc_limit/basically-burger-1.jpg"
-        />
+        {restaurants.map((restaurant) => {
+          return (
+            <RestaurantCard
+              key={restaurant._id}
+              id={restaurant._id}
+              title={restaurant.name}
+              rating={restaurant.rating}
+              address={restaurant.address}
+              genre={restaurant.category?.name}
+              imgUrl={restaurant.image}
+            />
+          );
+        })}
       </ScrollView>
     </View>
   );
